@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>OpenPath AI</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<!-- 🔷 NAVBAR -->
+<div class="navbar">
+
+    <div class="logo-group">
+        <i data-lucide="arrow-up-right" class="icon"></i>
+        <span>OpenPath</span>
+    </div>
+
+    <div class="divider">|</div>
+
+    <div class="logo-group">
+        <i data-lucide="brain" class="icon"></i>
+        <span>SmartStudy AI</span>
+    </div>
+
+</div>
+
+
+<!-- 🔷 HERO SECTION -->
+<div class="hero">
+
+    <!-- LEFT SIDE -->
+    <div class="left card">
+
+        <h1>OpenPath</h1>
+        <p class="subtitle">Building the Future of Education with AI</p>
+
+        <form action="/plan">
+
+            <input name="subject" placeholder="Subject (e.g. Math)" required>
+            <input name="level" placeholder="Level (Beginner / Advanced)" required>
+            <input name="goal" placeholder="Goal (Exam / Skill)" required>
+            <input name="time" placeholder="Hours per day" required>
+            <input name="deadline" placeholder="Deadline (days)" required>
+            <input name="style" placeholder="Learning style (Visual, etc.)" required>
+
+            <button type="submit">Generate Plan 🚀</button>
+
+        </form>
+
+        {% if plan %}
+        <div class="result card">
+            <h2>Your AI Study Plan</h2>
+            <p>{{ plan }}</p>
+        </div>
+        {% endif %}
+
+    </div>
+
+
+    <!-- RIGHT SIDE (YOUR PHOTO) -->
+    <div class="right">
+        <img src="{{ url_for('static', filename='founder.png') }}" class="founder-img">
+    </div>
+
+</div>
+
+
+<!-- 🔷 FEATURES SECTION -->
+<div class="features">
+
+    <div class="feature card">
+        <h3>🎯 Personalized Plans</h3>
+        <p>AI-generated study systems tailored to your exact goals.</p>
+    </div>
+
+    <div class="feature card">
+        <h3>⚡ Fast Learning</h3>
+        <p>Optimized with the 80/20 rule for maximum efficiency.</p>
+    </div>
+
+    <div class="feature card">
+        <h3>🌍 Accessible</h3>
+        <p>Designed for students without access to paid resources.</p>
+    </div>
+
+</div>
+
+
+<!-- 🔷 FOUNDER SECTION -->
+<div class="founder-section">
+
+    <h2>Founder</h2>
+    <p class="founder-name">Ahmed Mohamed Abdel Moniem</p>
+
+    <p class="founder-desc">
+        Building AI-powered education systems to empower students without access to traditional resources.
+    </p>
+
+</div>
+
+
+<!-- 🔷 FOOTER -->
+<div class="footer">
+    <p>© 2026 OpenPath AI • Built by Ahmed</p>
+</div>
+
+
+<script>
+    lucide.createIcons();
+</script>
+
+</body>
+</html>
