@@ -1,7 +1,10 @@
 from flask import Flask, request, render_template
 import requests
+import os
 
 app = Flask(__name__)
+
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 @app.route('/')
 def home():
@@ -10,31 +13,50 @@ def home():
 @app.route('/plan')
 def plan():
     subject = request.args.get("subject")
+    level = request.args.get("level")
+    goal = request.args.get("goal")
+    time = request.args.get("time")
+    deadline = request.args.get("deadline")
+    style = request.args.get("style")
 
-    ai_response = f"""
-Your Study Plan for {subject}:
+    prompt = f"""
+You are an elite study strategist.
 
-Day 1:
-- Learn basics
-- Watch simple videos
+Create a clear, structured, daily study plan.
 
-Day 2:
-- Practice exercises
+Subject: {subject}
+Level: {level}
+Goal: {goal}
+Study time: {time} hours/day
+Deadline: {deadline} days
+Learning style: {style}
 
-Day 3:
-- Review everything
+Make it:
+- Organized by days
+- Practical
+- Motivating
 """
 
-    return render_template("index.html", plan=ai_response)
-@app.route('/history')
-def history():
     try:
-        with open("plans.txt", "r", encoding="utf-8") as f:
-            content = f.read()
-    except:
-        content = "No saved plans yet."
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={GEMINI_API_KEY}"
 
-    return f"<pre>{content}</pre>"
+        response = requests.post(
+            url,
+            json={
+                "contents": [
+                    {"parts": [{"text": prompt}]}
+                ]
+            }
+        )
+
+        data = response.json()
+
+        ai_response = data["candidates"][0]["content"]["parts"][0]["text"]
+
+        return render_template("index.html", plan=ai_response)
+
+    except Exception as e:
+        return render_template("index.html", plan=f"Error: {str(e)}")
 
 if __name__ == '__main__':
     app.run(debug=True)
