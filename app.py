@@ -4,7 +4,7 @@ import os
 
 app = Flask(__name__)
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+GEMINI_API_KEY = os.getenv("AIzaSyAgq8aOGavEo4Uo2Q6cELsO89Ltb7j4oOU")
 
 @app.route('/')
 def home():
