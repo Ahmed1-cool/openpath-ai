@@ -42,25 +42,38 @@
     <div class="left card">
 
         <h1>OpenPath</h1>
-        <p class="subtitle">Building the Future of Education with AI</p>
+        <p class="subtitle">Your AI-powered path to mastering any subject.</p>
 
-        <form action="/plan">
+        <form action="/plan" method="GET" id="planForm">
 
-            <input name="subject" placeholder="Subject (e.g. Math)" required>
-            <input name="level" placeholder="Level (Beginner / Advanced)" required>
-            <input name="goal" placeholder="Goal (Exam / Skill)" required>
-            <input name="time" placeholder="Hours per day" required>
-            <input name="deadline" placeholder="Deadline (days)" required>
-            <input name="style" placeholder="Learning style (Visual, etc.)" required>
+            <input name="subject" placeholder="📘 Subject (e.g. Math)" required>
+            <input name="level" placeholder="🎓 Level (Beginner / Advanced)" required>
+            <input name="goal" placeholder="🎯 Goal (Exam / Skill)" required>
+            <input name="time" placeholder="⏱ Hours per day" required>
+            <input name="deadline" placeholder="📅 Deadline (days)" required>
+            <input name="style" placeholder="🧠 Learning style (Visual, etc.)" required>
+
+            <!-- NEW FEATURE -->
+            <select name="mode" required>
+                <option value="">🔥 Select Mode</option>
+                <option value="fast">⚡ Fast Learning</option>
+                <option value="deep">🧠 Deep Mastery</option>
+                <option value="exam">📚 Exam Focus</option>
+            </select>
 
             <button type="submit">Generate Plan 🚀</button>
 
         </form>
 
+        <!-- LOADING -->
+        <div id="loading" class="loading">
+            🤖 AI is generating your plan...
+        </div>
+
         {% if plan %}
         <div class="result card">
-            <h2>Your AI Study Plan</h2>
-            <p>{{ plan }}</p>
+            <h2>📊 Your AI Study Plan</h2>
+            <pre>{{ plan }}</pre>
         </div>
         {% endif %}
 
@@ -80,17 +93,17 @@
 
     <div class="feature card">
         <h3>🎯 Personalized Plans</h3>
-        <p>AI-generated study systems tailored to your exact goals.</p>
+        <p>AI-generated strategies tailored to your goals, time, and level.</p>
     </div>
 
     <div class="feature card">
-        <h3>⚡ Fast Learning</h3>
-        <p>Optimized with the 80/20 rule for maximum efficiency.</p>
+        <h3>⚡ Smart Efficiency</h3>
+        <p>Learn faster using proven techniques like active recall and 80/20.</p>
     </div>
 
     <div class="feature card">
-        <h3>🌍 Accessible</h3>
-        <p>Designed for students without access to paid resources.</p>
+        <h3>🌍 Built for Everyone</h3>
+        <p>Designed for students with limited resources and real challenges.</p>
     </div>
 
 </div>
@@ -103,7 +116,7 @@
     <p class="founder-name">Ahmed Mohamed Abdel Moniem</p>
 
     <p class="founder-desc">
-        Building AI-powered education systems to empower students without access to traditional resources.
+        Building AI-powered education systems to empower students worldwide — especially those without access to traditional learning opportunities.
     </p>
 
 </div>
@@ -111,12 +124,17 @@
 
 <!-- 🔷 FOOTER -->
 <div class="footer">
-    <p>© 2026 OpenPath AI • Built by Ahmed</p>
+    <p>© 2026 OpenPath AI • Built with ambition 🚀</p>
 </div>
 
 
+<!-- 🔥 SCRIPT -->
 <script>
     lucide.createIcons();
+
+    document.getElementById("planForm").addEventListener("submit", function() {
+        document.getElementById("loading").style.display = "block";
+    });
 </script>
 
 </body>
