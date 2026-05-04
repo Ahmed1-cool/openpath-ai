@@ -4,8 +4,6 @@ import os
 
 app = Flask(__name__)
 
-GEMINI_API_KEY = os.getenv("AIzaSyAgq8aOGavEo4Uo2Q6cELsO89Ltb7j4oOU")
-
 @app.route('/plan')
 def plan():
     import os
@@ -18,7 +16,7 @@ def plan():
     deadline = request.args.get("deadline")
     style = request.args.get("style")
 
-    api_key = os.getenv("GEMINI_API_KEY")
+    api_key = os.getenv("AIzaSyAgq8aOGavEo4Uo2Q6cELsO89Ltb7j4oOU")
 
     prompt = f"""
 Create a structured daily study plan.
