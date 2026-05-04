@@ -6,12 +6,11 @@ app = Flask(__name__)
 
 GEMINI_API_KEY = os.getenv("AIzaSyAgq8aOGavEo4Uo2Q6cELsO89Ltb7j4oOU")
 
-@app.route('/')
-def home():
-    return render_template("index.html")
-
 @app.route('/plan')
 def plan():
+    import os
+    import requests
+
     subject = request.args.get("subject")
     level = request.args.get("level")
     goal = request.args.get("goal")
@@ -19,10 +18,10 @@ def plan():
     deadline = request.args.get("deadline")
     style = request.args.get("style")
 
-    prompt = f"""
-You are an elite study strategist.
+    api_key = os.getenv("GEMINI_API_KEY")
 
-Create a clear, structured, daily study plan.
+    prompt = f"""
+Create a structured daily study plan.
 
 Subject: {subject}
 Level: {level}
@@ -31,32 +30,31 @@ Study time: {time} hours/day
 Deadline: {deadline} days
 Learning style: {style}
 
-Make it:
-- Organized by days
-- Practical
-- Motivating
+Make it clear, practical, and motivating.
 """
 
     try:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={GEMINI_API_KEY}"
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={api_key}"
 
         response = requests.post(
             url,
             json={
-                "contents": [
-                    {"parts": [{"text": prompt}]}
-                ]
+                "contents": [{"parts": [{"text": prompt}]}]
             }
         )
 
         data = response.json()
 
-        ai_response = data["candidates"][0]["content"]["parts"][0]["text"]
-
-        return render_template("index.html", plan=ai_response)
+        if "candidates" in data:
+            ai_response = data["candidates"][0]["content"]["parts"][0]["text"]
+        else:
+            ai_response = f"⚠️ Gemini error:\n{data}"
 
     except Exception as e:
-        return render_template("index.html", plan=f"Error: {str(e)}")
+        ai_response = f"Error: {str(e)}"
+
+    return render_template("index.html", plan=ai_response)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
