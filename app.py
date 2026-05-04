@@ -4,6 +4,7 @@ import os
 
 app = Flask(__name__)
 
+
 @app.route('/')
 def home():
     return render_template("index.html")
@@ -11,18 +12,23 @@ def home():
 
 @app.route('/plan')
 def plan():
-    import os
-    import requests
 
-    subject = request.args.get("subject")
-    level = request.args.get("level")
-    goal = request.args.get("goal")
-    time = request.args.get("time")
-    deadline = request.args.get("deadline")
-    style = request.args.get("style")
+    # Get user inputs safely
+    subject = request.args.get("subject", "Not specified")
+    level = request.args.get("level", "Not specified")
+    goal = request.args.get("goal", "Not specified")
+    time = request.args.get("time", "Not specified")
+    deadline = request.args.get("deadline", "Not specified")
+    style = request.args.get("style", "Not specified")
 
+    # Get API key from Railway environment
     api_key = os.getenv("GEMINI_API_KEY")
 
+    # Safety check
+    if not api_key:
+        return render_template("index.html", plan="⚠️ Missing API key. Check Railway Variables.")
+
+    # Prompt for Gemini
     prompt = f"""
 Create a structured daily study plan.
 
@@ -37,18 +43,26 @@ Make it clear, practical, and motivating.
 """
 
     try:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={api_key}"
+        # Correct modern Gemini model
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
 
         response = requests.post(
             url,
             json={
-                "contents": [{"parts": [{"text": prompt}]}]
+                "contents": [
+                    {
+                        "parts": [
+                            {"text": prompt}
+                        ]
+                    }
+                ]
             }
         )
 
         data = response.json()
 
-        if "candidates" in data:
+        # Extract response safely
+        if "candidates" in data and len(data["candidates"]) > 0:
             ai_response = data["candidates"][0]["content"]["parts"][0]["text"]
         else:
             ai_response = f"⚠️ Gemini error:\n{data}"
