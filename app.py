@@ -21,7 +21,7 @@ def plan():
     deadline = request.args.get("deadline")
     style = request.args.get("style")
 
-    api_key = os.getenv("AIzaSyBYdvbc6t9BkNgAMJEWPoxOtgQHtBLPyOo")
+    api_key = os.getenv(AIzaSyBYdvbc6t9BkNgAMJEWPoxOtgQHtBLPyOo)
 
     prompt = f"""
 Create a structured daily study plan.
