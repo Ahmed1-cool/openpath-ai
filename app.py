@@ -44,7 +44,7 @@ Make it clear, practical, and motivating.
 
     try:
         # Correct modern Gemini model
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
+        url = f"https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={api_key}"
 
         response = requests.post(
             url,
@@ -60,6 +60,7 @@ Make it clear, practical, and motivating.
         )
 
         data = response.json()
+        print(data)
 
         # Extract response safely
         if "candidates" in data and len(data["candidates"]) > 0:
