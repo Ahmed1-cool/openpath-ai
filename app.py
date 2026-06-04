@@ -23,6 +23,7 @@ def plan():
 
     # Get API key from Railway environment
     api_key = os.getenv("GEMINI_API_KEY")
+    print("API KEY FOUND:", bool(api_key))
 
     # Safety check
     if not api_key:
@@ -30,18 +31,29 @@ def plan():
 
     # Prompt for Gemini
     prompt = f"""
-Create a structured daily study plan.
+You are OpenPath AI, an expert academic mentor.
 
-Subject: {subject}
-Level: {level}
-Goal: {goal}
-Study time: {time} hours/day
-Deadline: {deadline} days
-Learning style: {style}
+Create a highly personalized study roadmap.
 
-Make it clear, practical, and motivating.
+Student Profile:
+- Subject: {subject}
+- Level: {level}
+- Goal: {goal}
+- Study Time: {time} hours/day
+- Deadline: {deadline} days
+- Learning Style: {style}
+
+Requirements:
+1. Create a day-by-day plan.
+2. Use active recall.
+3. Use spaced repetition.
+4. Include practice exercises.
+5. Recommend free learning resources.
+6. Add productivity tips.
+7. Add weekly milestones.
+8. Keep the tone motivating and inspiring.
+9. Format with clear headings and bullet points.
 """
-
     try:
         # Correct modern Gemini model
         url = f"https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={api_key}"
