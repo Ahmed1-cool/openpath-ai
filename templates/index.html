@@ -1,141 +1,115 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-
-    <title>OpenPath AI</title>
-
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-
-    <!-- Icons -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenPath AI - Study Mentor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
-
-    <!-- CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-
 </head>
-
 <body>
 
-<!-- 🔷 NAVBAR -->
 <div class="navbar">
-
     <div class="logo-group">
         <i data-lucide="arrow-up-right" class="icon"></i>
         <span>OpenPath</span>
     </div>
-
     <div class="divider">|</div>
-
     <div class="logo-group">
         <i data-lucide="brain" class="icon"></i>
-        <span>SmartStudy AI</span>
+        <span>SmartStudy AI Mentor</span>
     </div>
-
 </div>
 
-
-<!-- 🔷 HERO SECTION -->
-<div class="hero">
-
-    <!-- LEFT SIDE -->
-    <div class="left card">
-
-        <h1>OpenPath</h1>
-        <p class="subtitle">Your AI-powered path to mastering any subject.</p>
-
-        <form action="/plan" method="GET" id="planForm">
-
-            <input name="subject" placeholder="📘 Subject (e.g. Math)" required>
-            <input name="level" placeholder="🎓 Level (Beginner / Advanced)" required>
-            <input name="goal" placeholder="🎯 Goal (Exam / Skill)" required>
-            <input name="time" placeholder="⏱ Hours per day" required>
-            <input name="deadline" placeholder="📅 Deadline (days)" required>
-            <input name="style" placeholder="🧠 Learning style (Visual, etc.)" required>
-
-            <!-- NEW FEATURE -->
-            <select name="mode" required>
-                <option value="">🔥 Select Mode</option>
-                <option value="fast">⚡ Fast Learning</option>
-                <option value="deep">🧠 Deep Mastery</option>
-                <option value="exam">📚 Exam Focus</option>
-            </select>
-
-            <button type="submit">Generate Plan 🚀</button>
-
-        </form>
-
-        <!-- LOADING -->
-        <div id="loading" class="loading">
-            🤖 AI is generating your plan...
+<div class="main-layout">
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2>💬 OpenPath AI Mentor</h2>
+            <p>Ask anything about studying, strategies, or how Ahmed learns multiple languages!</p>
         </div>
-
-        {% if plan %}
-        <div class="result card">
-            <h2>📊 Your AI Study Plan</h2>
-            <pre>{{ plan }}</pre>
+        
+        <div class="chat-messages" id="chatMessages">
+            <div class="message ai-message">
+                Hello! I'm your AI study mentor. Ask me anything, like <strong>"How does Ahmed learn 5 languages?"</strong> or ask for study guidance!
+            </div>
         </div>
-        {% endif %}
-
+        
+        <div class="chat-input-area">
+            <input type="text" id="userInput" placeholder="Type your message here..." autocomplete="off">
+            <button id="sendBtn" onclick="sendMessage()">Send 🚀</button>
+        </div>
     </div>
 
-
-    <!-- RIGHT SIDE (YOUR PHOTO) -->
-    <div class="right">
+    <div class="sidebar-card">
         <img src="{{ url_for('static', filename='founder.png') }}" class="founder-img">
+        <div class="founder-name">Ahmed Mohamed Abdel Moniem</div>
+        <p class="founder-desc">
+            Building AI-powered education systems to empower students worldwide — especially those without access to traditional learning opportunities.
+        </p>
     </div>
-
 </div>
 
-
-<!-- 🔷 FEATURES SECTION -->
-<div class="features">
-
-    <div class="feature card">
-        <h3>🎯 Personalized Plans</h3>
-        <p>AI-generated strategies tailored to your goals, time, and level.</p>
-    </div>
-
-    <div class="feature card">
-        <h3>⚡ Smart Efficiency</h3>
-        <p>Learn faster using proven techniques like active recall and 80/20.</p>
-    </div>
-
-    <div class="feature card">
-        <h3>🌍 Built for Everyone</h3>
-        <p>Designed for students with limited resources and real challenges.</p>
-    </div>
-
-</div>
-
-
-<!-- 🔷 FOUNDER SECTION -->
-<div class="founder-section">
-
-    <h2>Founder</h2>
-    <p class="founder-name">Ahmed Mohamed Abdel Moniem</p>
-
-    <p class="founder-desc">
-        Building AI-powered education systems to empower students worldwide — especially those without access to traditional learning opportunities.
-    </p>
-
-</div>
-
-
-<!-- 🔷 FOOTER -->
-<div class="footer">
-    <p>© 2026 OpenPath AI • Built with ambition 🚀</p>
-</div>
-
-
-<!-- 🔥 SCRIPT -->
 <script>
     lucide.createIcons();
 
-    document.getElementById("planForm").addEventListener("submit", function() {
-        document.getElementById("loading").style.display = "block";
+    async function sendMessage() {
+        const inputField = document.getElementById("userInput");
+        const chatMessages = document.getElementById("chatMessages");
+        const userText = inputField.value.trim();
+        
+        if (!userText) return;
+        
+        // Append User Message
+        chatMessages.innerHTML += `<div class="message user-message">${escapeHtml(userText)}</div>`;
+        inputField.value = "";
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        
+        // Append temporary "Thinking..." bubble
+        const loadingId = "loading-" + Date.now();
+        chatMessages.innerHTML += `<div class="message ai-message" id="${loadingId}">🤖 Thinking...</div>`;
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        
+        try {
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: userText })
+            });
+            
+            const data = await response.json();
+            const loadingElement = document.getElementById(loadingId);
+            if (loadingElement) loadingElement.remove();
+            
+            if (response.ok && data.reply) {
+                chatMessages.innerHTML += `<div class="message ai-message">${marked.parse(data.reply)}</div>`;
+            } else {
+                chatMessages.innerHTML += `<div class="message ai-message">⚠️ ${data.reply || "Could not get a response."}</div>`;
+            }
+        } catch (err) {
+            const loadingElement = document.getElementById(loadingId);
+            if (loadingElement) loadingElement.remove();
+            chatMessages.innerHTML += `<div class="message ai-message">⚠️ Network error occurred. Please try again.</div>`;
+        }
+        
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function escapeHtml(text) {
+        return text
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    document.getElementById("userInput").addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+            sendMessage();
+        }
     });
 </script>
-
 </body>
 </html>
